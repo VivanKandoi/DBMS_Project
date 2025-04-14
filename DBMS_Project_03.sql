@@ -15,18 +15,16 @@ RENAME COLUMN PenaltyYards TO Penalty_Yards;
 
 -- No 1NF Normalisation
 
--- 2NF Normalisation
+-- No 2NF Normalisation
+
+-- 3NF Normalisation 
 
 ALTER TABLE PlayCalls
 DROP COLUMN GameDate,
 DROP COLUMN Formation, 
 DROP COLUMN PlayType, 
 DROP COLUMN PassType, 
-DROP COLUMN RushDirection;
-
--- 3NF Normalisation 
-
-ALTER TABLE PlayCalls
+DROP COLUMN RushDirection,
 DROP COLUMN IsRush,
 DROP COLUMN IsPass,
 DROP COLUMN IsSack,
