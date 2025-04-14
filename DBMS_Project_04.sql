@@ -1,4 +1,5 @@
 -- 1. Calculate total points scored by each team as home team
+CREATE VIEW View_TotalPointsHome AS
 SELECT t.TeamName, SUM(g.Home_Score) AS TotalHomePoints
 FROM Games g
 JOIN Teams t ON g.Home_TeamID = t.TeamID
@@ -6,13 +7,15 @@ GROUP BY t.TeamName
 ORDER BY TotalHomePoints DESC;
 
 -- 2. Calculate total points scored by each team as away team
-SELECT t.TeamName, SUM(g.Home_Score) AS TotalHomePoints
+CREATE VIEW View_TotalPointsAway AS
+SELECT t.TeamName, SUM(g.Home_Score) AS TotalAwayPoints
 FROM Games g
 JOIN Teams t ON g.Away_TeamID = t.TeamID
 GROUP BY t.TeamName
-ORDER BY TotalHomePoints DESC;
+ORDER BY TotalAwayPoints DESC;
 
 -- 3. Home vs. Away Performance
+CREATE VIEW View_HomeAwayPerformance AS
 SELECT 
     t.TeamName,
     SUM(CASE WHEN g.Home_TeamID = t.TeamID THEN 1 ELSE 0 END) AS HomeGames,
@@ -24,6 +27,7 @@ JOIN Games g ON t.TeamID = g.Home_TeamID OR t.TeamID = g.Away_TeamID
 GROUP BY t.TeamName;
 
 -- 4. Play Analysis by Downs for each Team
+CREATE VIEW View_DownsPlayAnalysis AS
 SELECT 
     t.TeamName,
     pc.Down,
@@ -39,6 +43,7 @@ GROUP BY t.TeamName, pc.Down
 ORDER BY t.TeamName, pc.Down;
 
 -- 5. Points Scored/Allowed Per Game
+CREATE VIEW View_PointsScoredAllowedPerGame AS
 SELECT 
     t.TeamName,
     ROUND(SUM(CASE WHEN g.Home_TeamID = t.TeamID THEN g.Home_Score ELSE g.Away_Score END) / COUNT(*), 2) AS AvgPointsScored,
@@ -51,6 +56,7 @@ GROUP BY t.TeamName
 ORDER BY PointDifferential DESC;
 
 -- 6. Rush Direction Effectiveness
+CREATE VIEW View_RushDirectionEffectiveness AS
 SELECT 
     t.TeamName,
     p.Rush_Direction,
@@ -65,6 +71,7 @@ GROUP BY t.TeamName, p.Rush_Direction
 ORDER BY t.TeamName, AvgYards DESC;
 
 -- 7. Passing Game Analysis
+CREATE VIEW View_PassingGameAnalysis AS
 SELECT 
     t.TeamName,
     p.Pass_Type,
@@ -79,6 +86,7 @@ GROUP BY t.TeamName, p.Pass_Type
 ORDER BY t.TeamName, AvgYards DESC;
 
 -- 8. Team Performance by Quarter (Using Play Data)
+CREATE VIEW View_TeamPerformanceByQuarter AS
 SELECT 
     t.TeamName,
     pc.Quarter,
@@ -93,6 +101,7 @@ GROUP BY t.TeamName, pc.Quarter
 ORDER BY t.TeamName, pc.Quarter;
 
 -- 9. Red Zone Efficiency
+CREATE VIEW View_RedZoneEfficiency AS
 SELECT 
     t.TeamName,
     SUM(CASE WHEN pc.Yard_Line <= 20 AND pc.Yards_Gained >= pc.Yard_Line THEN 1 ELSE 0 END) AS RedZoneTDs,
@@ -105,6 +114,7 @@ GROUP BY t.TeamName
 ORDER BY RedZoneEfficiency DESC;
 
 -- 10. Defensive Performance
+CREATE VIEW View_DefensivePerformance AS
 SELECT 
     t.TeamName,
     AVG(g.Away_Score) AS AvgPointsAllowedHome,
@@ -116,6 +126,7 @@ JOIN Games g ON t.TeamID = g.Home_TeamID OR t.TeamID = g.Away_TeamID
 GROUP BY t.TeamName;
 
 -- 11. Turnover Analysis
+CREATE VIEW View_TurnoverAnalysis AS
 SELECT 
     t.TeamName,
     SUM(CASE WHEN p.Type IN ('FUMBLES', 'INTERCEPTION') THEN 1 ELSE 0 END) AS TurnoversForced,
@@ -130,6 +141,7 @@ GROUP BY t.TeamName
 ORDER BY TurnoverDifferential DESC;
 
 -- 12. Formation Effectiveness
+CREATE VIEW View_FormationEffectiveness AS
 SELECT 
     t.TeamName,
     p.Formation,
@@ -147,6 +159,7 @@ HAVING COUNT(*) > 10
 ORDER BY t.TeamName, BigPlayRate DESC;
 
 -- 13. Red Zone Play Selection
+CREATE VIEW View_RedZonePlaySelection AS
 SELECT 
     t.TeamName,
     p.Type,
@@ -162,6 +175,7 @@ HAVING COUNT(*) > 3
 ORDER BY t.TeamName, TouchdownRate DESC;
 
 -- 14. Quarterback Pressure Analysis
+CREATE VIEW View_QuarterbackPressureAnalysis AS
 SELECT 
     t.TeamName AS Defense,
     COUNT(*) AS TotalPressures,
@@ -177,6 +191,7 @@ GROUP BY t.TeamName
 ORDER BY TotalPressures DESC;
 
 -- 15. Run-Pass Balance by Score Differential
+CREATE VIEW View_RunPassBalance AS
 SELECT 
     t.TeamName,
     CASE 
@@ -197,6 +212,7 @@ GROUP BY t.TeamName, GameState
 ORDER BY t.TeamName, GameState;
 
 -- 16. Defensive Coverage Breakdown
+CREATE VIEW View_DefensiveCoverageBreakdown AS
 SELECT 
     t.TeamName AS Defense,
     p.Pass_Type,
@@ -212,6 +228,7 @@ GROUP BY t.TeamName, p.Pass_Type
 ORDER BY t.TeamName, AvgYardsAllowed;
 
 -- 17. Most Frequently Used Plays
+CREATE VIEW View_FrequentlyUsedPlays AS
 SELECT Type, COUNT(*) as count
 FROM Plays
 GROUP BY Type
@@ -219,6 +236,7 @@ ORDER BY count DESC
 LIMIT 5;
 
 -- 18. Pass-Run Ratio by Teams
+CREATE VIEW View_PassRunRatio AS
 SELECT 
     t.TeamName AS OffensiveTeam,
     SUM(CASE WHEN p.Type = 'PASS' THEN 1 ELSE 0 END) AS PassAttempts,
@@ -236,6 +254,7 @@ GROUP BY t.TeamName
 ORDER BY PassRunRatio DESC;
 
 -- 19. Formation-PlayType Analysis
+CREATE VIEW View_FormationPlaytypeAnalysis AS
 SELECT 
     p.Formation,
     COUNT(*) AS TotalPlays,
@@ -250,7 +269,8 @@ GROUP BY p.Formation
 HAVING COUNT(*) > 50
 ORDER BY AvgYards DESC;
 
--- Team Performane Summary
+-- 20. Team Performane Summary
+CREATE VIEW View_TeamPerformanceSummary AS
 SELECT 
     t.TeamName,
     COUNT(DISTINCT g.Game_ID) AS GamesPlayed,
@@ -263,26 +283,4 @@ FROM Teams t
 LEFT JOIN Games g ON t.TeamID = g.Home_TeamID OR t.TeamID = g.Away_TeamID
 GROUP BY t.TeamName
 ORDER BY Wins DESC;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
