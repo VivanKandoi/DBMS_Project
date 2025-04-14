@@ -1,3 +1,5 @@
+-- CREATION AND POPULATION OF TEAMS
+
 CREATE TABLE Teams (
     TeamID VARCHAR(5) PRIMARY KEY,
     TeamName VARCHAR(100),
@@ -39,7 +41,7 @@ INSERT INTO Teams (TeamID, TeamName, Head_Coach, Offensive_Coordinator, Defensiv
 ('TEN', 'Tennessee Titans', 'Brian Callahan', 'Nick Holz', 'Dennard Wilson'),
 ('WAS', 'Washington Commanders', 'Dan Quinn', 'Kliff Kingsbury', 'Joe Whitt Jr.');
 
-
+-- CREATION AND POPULATION OF GAMES
 CREATE TABLE Games (
     Game_ID INT(20) PRIMARY KEY,
     Game_Date DATE,
@@ -359,6 +361,9 @@ INSERT INTO GAMES (Game_ID, Game_Date, Home_TeamID, Away_TeamID, Home_Score, Awa
 (2025010511, '2025-01-05', (SELECT TeamID FROM TEAMS WHERE TeamName = 'Los Angeles Chargers'), (SELECT TeamID FROM TEAMS WHERE TeamName = 'Las Vegas Raiders'), 34, 20),
 (2025010512, '2025-01-05', (SELECT TeamID FROM TEAMS WHERE TeamName = 'Seattle Seahawks'), (SELECT TeamID FROM TEAMS WHERE TeamName = 'Los Angeles Rams'), 30, 25),
 (2025010513, '2025-01-05', (SELECT TeamID FROM TEAMS WHERE TeamName = 'Detroit Lions'), (SELECT TeamID FROM TEAMS WHERE TeamName = 'Minnesota Vikings'), 31, 9);
+
+
+-- CREATION AND POPULATION OF PLAYS
 
 CREATE TABLE Plays (
     Play_ID VARCHAR(50) PRIMARY KEY,
